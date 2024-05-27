@@ -1,0 +1,62 @@
+# Copyright VMware, Inc.
+# SPDX-License-Identifier: APACHE-2.0
+
+version: '2'
+
+services:
+    mariadb:
+        image: docker.io/bitnami/mariadb:10.6
+        environment:
+            # ALLOW_EMPTY_PASSWORD is recommended only for development.
+            ALLOW_EMPTY_PASSWORD: 'yes'
+            MARIADB_USER: '${DB_USERNAME}'
+            MARIADB_DATABASE: '${DB_DATABASE}'
+            MARIADB_PASSWORD: '${DB_PASSWORD}'
+            MARIADB_ROOT_PASSWORD: '${DB_PASSWORD}'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        ports:
+            - '${FORWARD_DB_PORT:-3307}:3306'
+        #BEFORE_START: mkdir docker/mariadb/volume/
+        #BEFORE_START: sudo chown -R 1001:1001 docker/mariadb/volume/
+        #BEFORE_START: sudo chmod 777 -R docker/mariadb/volume/
+        volumes:
+            - 'mariadb_data:/bitnami/mariadb'
+        networks:
+            - internal
+    app:
+        image: docker.io/bitnami/laravel:10
+        environment:
+            DB_HOST: 'mariadb'
+            DB_PORT: '3306'
+            DB_USERNAME: '${DB_USERNAME}'
+            DB_DATABASE: '${DB_DATABASE}'
+            DB_PASSWORD: '${DB_PASSWORD}'
+            PHP_IDE_CONFIG: "serverName=localhost"
+        ports:
+            - '${APP_PORT:-8000}:8000'
+        # use for initial container build
+        # command: sh -c "composer install"
+        volumes:
+            - './:/app'
+            - './docker/app/conf.d:/opt/bitnami/php/etc/conf.d'
+        depends_on:
+            - mariadb
+            - signal-cli-rest-api
+        networks:
+            - internal
+    signal-cli-rest-api:
+        image: bbernhard/signal-cli-rest-api:latest
+        environment:
+            - MODE=json-rpc #supported modes: json-rpc, native, normal
+            #- AUTO_RECEIVE_SCHEDULE=0 22 * * * #enable this parameter on demand (see description below)
+        volumes:
+            - "./signal-cli-config:/home/.local/share/signal-cli" #map "signal-cli-config" folder on host system into docker container. the folder contains the password and cryptographic keys when a new number is registered
+        networks:
+            - internal
+networks:
+    internal:
+        driver: bridge
+
+volumes:
+    mariadb_data:
+        driver: local

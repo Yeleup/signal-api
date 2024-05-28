@@ -1,6 +1,7 @@
 <?php
 
-use App\Http\Controllers\SendController;
+use App\Http\Controllers\DeviceController;
+use App\Http\Controllers\MessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,5 +10,6 @@ use Illuminate\Support\Facades\Route;
 //})->middleware('auth:sanctum');
 
 Route::group(['middleware' => 'verify.signal.token'], function () {
-    Route::post('/send', [SendController::class, 'send']);
+    Route::post('/send', [MessageController::class, 'postSend']);
+    Route::get('/qrcodelink', [DeviceController::class, 'getQrcodelink']);
 });

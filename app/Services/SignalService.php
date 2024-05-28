@@ -10,8 +10,13 @@ class SignalService
     {
     }
 
-    public function sendSignalMessage($message, $recipients, $base64_attachments = null)
+    public function sendSignalMessage(array $params)
     {
-        return $this->gateway->sendMessage($message, $recipients, $base64_attachments);
+        return $this->gateway->sendMessage($params);
+    }
+
+    public function generateSignalQrCode(array $params): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
+        return $this->gateway->generateQrCode($params);
     }
 }

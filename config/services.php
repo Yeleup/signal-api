@@ -40,5 +40,6 @@ return [
         'base_url' => env('SIGNAL_API_BASE_URL', 'http://localhost:8080'),
         'number' => env('SIGNAL_API_NUMBER', '+1234567890'),
         'api_token' => env('SIGNAL_API_TOKEN', 'secret'),
+        'device_name' => env('SIGNAL_API_DEVICE_NAME', 'signal-cli-rest-api-1'),
     ],
 ];

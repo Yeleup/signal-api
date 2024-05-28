@@ -12,7 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->append(\App\Http\Middleware\VerifySignalApiToken::class);
+        $middleware->alias([
+            'verify.signal.token' => \App\Http\Middleware\VerifySignalApiToken::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

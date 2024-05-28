@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    //
+    'signal' => [
+        'base_url' => env('SIGNAL_API_BASE_URL', 'http://localhost:8080'),
+        'number' => env('SIGNAL_API_NUMBER', '+1234567890'),
+        'api_token' => env('SIGNAL_API_TOKEN', 'secret'),
+    ],
 ];

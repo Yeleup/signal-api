@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SendController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -7,4 +8,6 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::get('/example', [\App\Http\Controllers\SendController::class, 'example']);
+Route::group(['middleware' => 'verify.signal.token'], function () {
+    Route::post('/send', [SendController::class, 'send']);
+});

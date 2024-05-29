@@ -19,6 +19,17 @@ class SignalApiService
 
     public function sendRequest(Request $request, $path): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
     {
+        // Преобразуем путь и метод запроса в имя метода класса
+        $method = strtolower($request->method()) . str_replace('/', '', ucwords($path, '/'));
+
+        if (method_exists($this, $method)) {
+            return $this->$method($request);
+        }
+        return $this->genericRequest($request, $path);
+    }
+
+    protected function genericRequest(Request $request, $path): \Illuminate\Foundation\Application|\Illuminate\Http\Response|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Routing\ResponseFactory
+    {
         $response = $this->client->request($request->method(), $path, [
             'headers' => $this->filterHeaders($request->header()),
             'query' => $request->query(),

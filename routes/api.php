@@ -1,15 +1,7 @@
 <?php
 
-use App\Http\Controllers\DeviceController;
-use App\Http\Controllers\MessageController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\SignalApiController;
 use Illuminate\Support\Facades\Route;
 
-//Route::get('/user', function (Request $request) {
-//    return $request->user();
-//})->middleware('auth:sanctum');
-
-Route::group(['middleware' => 'verify.signal.token'], function () {
-    Route::post('/send', [MessageController::class, 'postSend']);
-    Route::get('/qrcodelink', [DeviceController::class, 'getQrcodelink']);
-});
+Route::any('/signal/{path}', [SignalApiController::class, 'proxy'])
+    ->where('path', '.*')->middleware('verify.signal.token');
